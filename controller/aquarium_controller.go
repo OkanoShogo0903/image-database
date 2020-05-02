@@ -4,7 +4,7 @@ import (
     "log"
     "net/http"
 
-    "github.com/OkanoShogo0903/osakana/model"
+    "github.com/OkanoShogo0903/image-database/model"
 
     "github.com/jmoiron/sqlx"
     "github.com/gin-gonic/gin"
