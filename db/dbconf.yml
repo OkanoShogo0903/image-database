@@ -1,0 +1,22 @@
+test:
+    driver: postgres
+    open: user=liam dbname=tester sslmode=disable
+
+development:
+    driver: mysql
+    open: root:g4NL4RD3tZ&&@tcp(127.0.0.1:3306)/osakana_db
+    #open: tcp:localhost:3306*test_db/okano/g4NL4RD3tZ&&
+
+production:
+    driver: postgres
+    open: user=liam dbname=tester sslmode=verify-full
+
+customimport:
+    driver: customdriver
+    open: customdriver open
+    import: github.com/custom/driver
+    dialect: mysql
+
+environment_variable_config:
+    driver: $DB_DRIVER
+    open: $DATABASE_URL
