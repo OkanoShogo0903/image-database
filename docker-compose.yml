@@ -2,15 +2,14 @@ version: "3.5"
 
 services:
   mysql:
+    image: mysql:8.0
     container_name: push_study_db
-    image: mysql:5.7.22
-    volumes:
-      - ./mysql/:/docker-entrypoint-initdb.d/
-      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      MYSQL_ROOT_PASSWORD: password
     ports:
-      - 4306:3306
+      - 3306:3306
   app:
     build:
       context: .
