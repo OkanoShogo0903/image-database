@@ -53,3 +53,7 @@ func (ic *ImageController)RegisteImage(c *gin.Context) {
     m := make([]model.Image, 0)
     c.JSON(http.StatusOK, m)
 }
+func (ic *ImageController)HealthCheck(c *gin.Context) {
+    c.Status(http.StatusOK)
+}
+
