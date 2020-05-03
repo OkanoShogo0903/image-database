@@ -7,6 +7,6 @@ build:
 release:
   image: worker
   command:
-    - make up_migrate_prod
+    - cd db && make init
 run:
   web: /main
