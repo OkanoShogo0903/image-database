@@ -11,7 +11,8 @@ COPY go.sum .
 RUN go mod download
 COPY . .
 
-RUN GOOS=linux GOARCH=amd64 go build -o /main
+RUN pwd
+RUN GOOS=linux GOARCH=amd64 go build -o /main cmd/api/main.go
 
 FROM alpine:3.9
 
