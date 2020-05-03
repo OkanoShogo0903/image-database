@@ -21,4 +21,10 @@ migrate/up:
 __migrate/down:
 	@goose -dir migrations mysql "$(DATASOURCE)" down
 
-init: install migrate/init migrate/up
+docke-compose/up:
+	docker-compose up -d
+
+docker-compose/down:
+	docker-compose down
+
+init: install docke-compose/up migrate/init migrate/up

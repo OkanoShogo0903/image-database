@@ -4,7 +4,7 @@ import (
     "log"
     //"net/http"
 
-    //"github.com/OkanoShogo0903/image-database/controller"
+    "github.com/OkanoShogo0903/image-database/controller"
     db2 "github.com/OkanoShogo0903/image-database/db"
 
     "github.com/jmoiron/sqlx"
@@ -28,6 +28,8 @@ func (s *Server) Init(datasource string) {
     if err != nil {
         log.Fatalf("failed db init. %s", err)
     }
+    log.Printf("successed db open. %s", datasource)
+
     s.db = dbcon
     s.router = s.Route()
 }
@@ -40,19 +42,14 @@ func (s *Server) Run(port string) {
 func (s *Server) Route() *gin.Engine {
     router := gin.Default()
     router.Use(cors.Default())
-
     //router.Use(static.Serve("/", static.LocalFile("./frontend/dist", false))) // Home
 
-    /*
-    aquarium_controller := controller.NewAquarium(s.db)
-    user := router.Group("/user")
-    {
-        user.GET("/check", aquarium_controller.GetUserExistence)
-        user.GET("/aquarium", aquarium_controller.GetUserData)
-        user.PUT("/update", aquarium_controller.UpdateUserData)
-        user.POST("/signup", aquarium_controller.Signup)
-    }
-    */
+    controller := controller.New(s.db)
+
+    router.GET("/images", controller.GetRequestedImage)
+    //router.GET("/Attributes", controller.GetAttributes)
+    router.PUT("/registe", controller.RegisteImage)
+    //router.PUT("/update", aquarium_controller.UpdateImageAttribute)
 
     //router.NoRoute(routers.NoRoute)
     return router

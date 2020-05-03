@@ -27,7 +27,6 @@ func main() {
     log.SetOutput(os.Stdout)
 
     datasource := loadEnv("LOCAL_HEROKU_IMG_APP_DATABASE_URL", "DATABASE_URL")
-    log.Printf(datasource)
 
     s := server.NewServer()
     s.Init(datasource)
