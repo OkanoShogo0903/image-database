@@ -6,7 +6,5 @@ build:
       target: builder 
 release:
   image: worker
-  command:
-    - cd db && make init
 run:
   web: /main
