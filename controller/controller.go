@@ -35,9 +35,7 @@ func (ic *ImageController)GetRequestedImage(c *gin.Context) {
     //attributes.attribute.append(c.)
 
     m := make([]model.ImageDB, 0)
-    log.Printf(c.Query("primary"))
     err := ic.db.Select(&m, `SELECT * FROM image WHERE attribute_primary = ?`, c.Query("primary"))
-
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
