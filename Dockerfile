@@ -12,6 +12,7 @@ RUN go mod download
 COPY . .
 
 RUN pwd
+RUN cd db && make install
 RUN cd db && make migrate/up
 RUN GOOS=linux GOARCH=amd64 go build -o /main cmd/api/main.go
 
