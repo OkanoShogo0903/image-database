@@ -13,7 +13,7 @@ COPY . .
 
 RUN GOOS=linux GOARCH=amd64 go build -o /main cmd/api/main.go
 
-FROM alpine:3.9
+FROM golang:alpine:3.9
 
 WORKDIR /app
 COPY . .
