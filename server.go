@@ -47,6 +47,7 @@ func (s *Server) Route() *gin.Engine {
     controller := controller.New(s.db)
 
     router.GET("/health_check", controller.HealthCheck)
+    router.GET("/all_image", controller.GetAllImage)
     router.GET("/images", controller.GetRequestedImage)
     //router.GET("/Attributes", controller.GetAttributes)
     router.PUT("/registe", controller.RegisteImage)

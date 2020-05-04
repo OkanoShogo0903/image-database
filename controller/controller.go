@@ -3,6 +3,7 @@ package controller
 import (
     "log"
     "net/http"
+    "encoding/json"
 
     "github.com/OkanoShogo0903/image-database/model"
 
@@ -42,7 +43,14 @@ func (ic *ImageController)GetRequestedImage(c *gin.Context) {
         return
     }
 
-    c.JSON(http.StatusOK, m)
+    j, err := json.Marshal(m)
+    if err != nil {
+        log.Printf(err.Error())
+        c.Status(http.StatusInternalServerError)
+        return
+    }
+
+    c.JSON(http.StatusOK, j)
 }
 
 func (ic *ImageController)RegisteImage(c *gin.Context) {
@@ -51,6 +59,7 @@ func (ic *ImageController)RegisteImage(c *gin.Context) {
     m := make([]model.Image, 0)
     c.JSON(http.StatusOK, m)
 }
+
 func (ic *ImageController)HealthCheck(c *gin.Context) {
     c.Status(http.StatusOK)
 }

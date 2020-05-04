@@ -18,3 +18,8 @@ $ heroku config:set DATABASE_URL='mysql://38faf8fefeaaef:dfefe44@us-cdbr-iron-ea
 // mysql://、?reconnect=trueを取り除く。そして、Host部分をtcp()で囲む。また末尾に?parseTime=trueを追加。
 $ git push heroku master
 ```
+
+- 開発環境の環境変数
+```
+export LOCAL_HEROKU_IMG_APP_DATABASE_URL="root:password@tcp(localhost:3306)/image_db?parseTime=true" 
+```

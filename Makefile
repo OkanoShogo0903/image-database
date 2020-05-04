@@ -31,6 +31,10 @@ api/local/get:
 	curl -v -X GET \
 		http://localhost:8080/images?primary=flatter
 
+api/local/get_all:
+	curl -v -X GET \
+		http://localhost:8080/all_image
+
 api/local/put:
 	curl -v -X PUT \
 		http://localhost:8080/registe \

@@ -1,6 +1,8 @@
 package model
 
-import "database/sql"
+import (
+    null "gopkg.in/guregu/null.v3"
+)
 
 // DB mapping and throw to client as raw
 type ImageDB struct{
@@ -8,8 +10,8 @@ type ImageDB struct{
     Url string `db:"url" json:"url"`
     Character_name string `db:"character_name" json:"character_name"`
     Attribute_primary   string `db:"attribute_primary" json:"attribute_primary"`
-    Attribute_secondary sql.NullString `db:"attribute_secondary" json:"attribute_secondary"`
-    Attribute_tertiary  sql.NullString `db:"attribute_tertiary" json:"attribute_tertiary"`
+    Attribute_secondary null.String `db:"attribute_secondary" json:"attribute_secondary"`
+    Attribute_tertiary  null.String `db:"attribute_tertiary" json:"attribute_tertiary"`
 }
 
 // For receive client
