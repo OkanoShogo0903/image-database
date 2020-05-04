@@ -11,15 +11,16 @@ COPY go.sum .
 RUN go mod download
 COPY . .
 
+RUN pwd
+RUN ls
+
 RUN GOOS=linux GOARCH=amd64 go build -o /main cmd/api/main.go
 
 FROM alpine:3.9
 
-RUN pwd
-RUN ls
-
-RUN cd db && make install
-RUN cd db && make migrate/up
+RUN mysql
+#RUN cd db && make install
+#RUN cd db && make migrate/up
 
 COPY --from=builder /main .
 
