@@ -12,6 +12,8 @@ RUN go mod download
 COPY . .
 
 RUN pwd
+RUN cd db && make migrate/init
+RUN cd db && make migrate/up
 RUN GOOS=linux GOARCH=amd64 go build -o /main cmd/api/main.go
 
 FROM alpine:3.9
