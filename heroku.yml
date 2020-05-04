@@ -7,6 +7,6 @@ build:
 release:
   image: worker
   command:
-    - cd /app/db && make install && make migrate/init && make migrate/up
+    - cd /app/db && make install && make migrate/up
 run:
   web: /main
