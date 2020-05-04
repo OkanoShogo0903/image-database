@@ -19,11 +19,19 @@ docker-compose/up:
 docker-compose/down:
 	docker-compose down
 
-api/get:
+api/heroku/health_check:
+	curl -v -X GET \
+		https://img-database.herokuapp.com/health_check
+
+api/heroku/get:
+	curl -v -X GET \
+		https://img-database.herokuapp.com/images?primary=flatter
+
+api/local/get:
 	curl -v -X GET \
 		http://localhost:8080/images?primary=flatter
 
-api/post:
+api/local/post:
 	curl -v -X POST \
 		http://localhost:8080/registe \
 		-H 'content-type: application/json' \
