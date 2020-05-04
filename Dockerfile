@@ -19,11 +19,13 @@ WORKDIR /app
 COPY . .
 RUN pwd
 RUN ls
-RUN cd db && make install
+#RUN cd db && make install
+RUN which goose || GO111MODULE=off go get -u github.com/pressly/goose/cmd/goose
 #RUN cd db && make migrate/init # kesu
-RUN cd db && make migrate/up
+#RUN cd db && make migrate/up
+RUN goose -dir migrations mysql "root:password@tcp(127.0.0.1:3306)/image_db" up
 
-COPY --from=builder /main .
+COPY --from=builder /main /main
 
 ENV PORT=${PORT}
 ENTRYPOINT ["/main"]
