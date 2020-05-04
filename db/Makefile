@@ -28,4 +28,3 @@ docker-compose/down:
 	docker-compose down
 
 init: install docke-compose/up migrate/init migrate/up
-
