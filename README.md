@@ -23,3 +23,18 @@ $ git push heroku master
 ```
 export LOCAL_HEROKU_IMG_APP_DATABASE_URL="root:password@tcp(localhost:3306)/image_db?parseTime=true" 
 ```
+
+- awscli
+
+~/.aws/credentials
+```
+[default]
+aws_access_key_id=xxxxxxxxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+~/.aws/config
+``` 
+[default]
+region=xx-xxxx-x
+```

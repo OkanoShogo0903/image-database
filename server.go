@@ -41,7 +41,12 @@ func (s *Server) Run(port string) {
 
 func (s *Server) Route() *gin.Engine {
     router := gin.Default()
-    router.Use(cors.Default())
+    //router.Use(cors.Default())
+    router.Use(cors.New(cors.Config{
+        AllowOrigins: []string{"http://localhost:8081"},
+        AllowMethods: []string{"GET", "PUT", "DELETE", "OPTIONS"},
+        AllowHeaders: []string{"*"},
+    }))
     //router.Use(static.Serve("/", static.LocalFile("./frontend/dist", false))) // Home
 
     controller := controller.New(s.db)

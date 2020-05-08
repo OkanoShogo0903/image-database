@@ -24,3 +24,7 @@ type Attributes struct {
     attribute []string
 }
 
+type AwsInfo struct{
+    bucket_name string
+    object_key string
+}
