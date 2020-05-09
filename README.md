@@ -22,19 +22,8 @@ $ git push heroku master
 - 開発環境の環境変数
 ```
 export LOCAL_HEROKU_IMG_APP_DATABASE_URL="root:password@tcp(localhost:3306)/image_db?parseTime=true" 
-```
 
-- awscli
-
-~/.aws/credentials
-```
-[default]
-aws_access_key_id=xxxxxxxxxxxxxxxxxxxx
-aws_secret_access_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-~/.aws/config
-``` 
-[default]
-region=xx-xxxx-x
+export AWS_S3_REGION='xxxxxxxxx'
+export AWS_IAM_ACCESS_KEY='xxxxxxxxxxxxxxxxxxxx'
+export AWS_SECRET_ACCESS_KEY='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 ```

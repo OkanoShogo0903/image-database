@@ -11,6 +11,7 @@ import (
     "github.com/jmoiron/sqlx"
     "github.com/gin-gonic/gin"
 
+    "github.com/OkanoShogo0903/image-database/aws"
     "github.com/OkanoShogo0903/image-database/model"
 )
 
@@ -92,8 +93,11 @@ func (ic *ImageController)RegisteImage(c *gin.Context) {
     defer file_io.Close()
 
     // Upload image and get uploaded url
+    s3 := aws.New()
+    s3.Init("resimagebucket", "AWS_S3_REGION", "AWS_IAM_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY")
+
     name := createUuidV4() + extractExtension(file.Filename)
-    url, err := UploadImage(file_io, name)
+    url, err := s3.UploadImage(file_io, name)
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
