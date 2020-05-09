@@ -43,13 +43,7 @@ func (aw *S3) Init(bucket string, env_region string, env_ak string, env_sak stri
 }
 
 func (aw *S3) UploadImage(file_data io.Reader, file_name string) ( string, error ){
-    /*
-    */
-
-    // sessionの作成
-    //sess := session.Must(session.NewSession())
-
-    // New
+    // 環境変数から取ってきたクレデンシャル情報を付与する
     creds := credentials.NewStaticCredentials(aw.iam_access_key, aw.secret_access_key, "")
     sess := session.Must(session.NewSession(&aws.Config{
         Credentials: creds,
