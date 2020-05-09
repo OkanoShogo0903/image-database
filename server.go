@@ -41,9 +41,10 @@ func (s *Server) Run(port string) {
 
 func (s *Server) Route() *gin.Engine {
     router := gin.Default()
+
     //router.Use(cors.Default())
     router.Use(cors.New(cors.Config{
-        AllowOrigins: []string{"http://localhost:8081"},
+        AllowOrigins: []string{"http://localhost:8081", "https://response-img.herokuapp.com/"},
         AllowMethods: []string{"GET", "PUT", "DELETE", "OPTIONS"},
         AllowHeaders: []string{"*"},
     }))
