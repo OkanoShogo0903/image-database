@@ -5,7 +5,6 @@ import (
     "log"
     "strings"
     "net/http"
-    "encoding/json"
 
     "github.com/google/uuid"
     "github.com/jmoiron/sqlx"
@@ -52,15 +51,29 @@ func (ic *ImageController)GetRequestedImage(c *gin.Context) {
         return
     }
 
-    j, err := json.Marshal(m)
+    c.JSON(http.StatusOK, m)
+}
+
+func (ic *ImageController) GetAllGenre(c *gin.Context) {
+    // TODO: GetCharacterName() 
+    m := make([]model.Genre, 0)
+
+    sql_string := `
+        SELECT attribute_primary as Extracted FROM image 
+        UNION 
+        SELECT attribute_secondary FROM image 
+        UNION 
+        SELECT attribute_tertiary FROM image 
+        `
+
+    err := ic.db.Select(&m, sql_string)
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
         return
     }
-    log.Printf(string(j))
 
-    c.JSON(http.StatusOK, j)
+    c.JSON(http.StatusOK, m)
 }
 
 func (ic *ImageController)RegisteImage(c *gin.Context) {

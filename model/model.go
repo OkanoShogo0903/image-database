@@ -19,6 +19,10 @@ type Image struct{
     url string `json:"url"`
 }
 
+type Genre struct{
+     Extracted null.String `db:"Extracted"`
+}
+
 // TODO: string -> attribute enum
 type Attributes struct {
     attribute []string
