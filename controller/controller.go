@@ -55,7 +55,6 @@ func (ic *ImageController)GetRequestedImage(c *gin.Context) {
 }
 
 func (ic *ImageController) GetAllGenre(c *gin.Context) {
-    // TODO: GetCharacterName() 
     m := make([]model.Genre, 0)
 
     sql_string := `
@@ -76,11 +75,25 @@ func (ic *ImageController) GetAllGenre(c *gin.Context) {
     c.JSON(http.StatusOK, m)
 }
 
+func (ic *ImageController) GetAllCharactorName(c *gin.Context) {
+    m := make([]model.ImageDB, 0)
+
+    sql_string := `SELECT character_name FROM image`
+
+    err := ic.db.Select(&m, sql_string)
+    if err != nil {
+        log.Printf(err.Error())
+        c.Status(http.StatusInternalServerError)
+        return
+    }
+
+    c.JSON(http.StatusOK, m)
+}
+
 func (ic *ImageController)RegisteImage(c *gin.Context) {
     // TODO: validation, id brocking, extension blocking ...
     // TODO: 同一IPからの過剰な送信を防ぐ
     // TODO: S3に一定以上データが貯まると送信を防ぐ(サーバのアプリ側で弾くのではなく、S3のポリシーを変えるのが確実)
-    // TODO: ファイルサイズ一定以上で弾く
     form, _ := c.MultipartForm()
 
     file := form.File["file"][0] // ひとつだけ処理
@@ -107,7 +120,7 @@ func (ic *ImageController)RegisteImage(c *gin.Context) {
 
     // Upload image and get uploaded url
     s3 := aws.New()
-    s3.Init("resimagebucket", "AWS_S3_REGION", "AWS_IAM_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY")
+    s3.Init("resimagebucket", "AWS_S3_REGION", "AWS_IAM_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY") // Please write "export AWS_S3_REGION='xxx' to .bashrc"
 
     name := createUuidV4() + extractExtension(file.Filename)
     url, err := s3.UploadImage(file_io, name)
