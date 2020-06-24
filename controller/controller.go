@@ -11,7 +11,7 @@ import (
     "github.com/gin-gonic/gin"
 
     "github.com/OkanoShogo0903/image-database/aws"
-    "github.com/OkanoShogo0903/image-database/model"
+    "github.com/OkanoShogo0903/image-database/repository"
 )
 
 type ImageController struct {
@@ -22,75 +22,57 @@ func New(db *sqlx.DB) *ImageController {
     return &ImageController{db: db}
 }
 
-func (ic *ImageController)HealthCheck(c *gin.Context) {
+func (ic *ImageController) HealthCheck(c *gin.Context) {
     c.Status(http.StatusOK)
 }
 
-func (ic *ImageController)GetAllImage(c *gin.Context) {
-    m := make([]model.ImageDB, 0)
-    err := ic.db.Select(&m, `SELECT * FROM image`)
+func (ic *ImageController) GetAllImage(c *gin.Context) {
+    images, err := repository.AllImage(ic.db)
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
         return
     }
 
-    c.JSON(http.StatusOK, m)
+    c.JSON(http.StatusOK, images)
 }
 
-func (ic *ImageController)GetRequestedImage(c *gin.Context) {
+func (ic *ImageController) GetRequestedImage(c *gin.Context) {
     //var attributes model.Attributes
     //attributes.attribute.append(c.)
-
-    m := make([]model.ImageDB, 0)
-
-    err := ic.db.Select(&m, `SELECT * FROM image WHERE attribute_primary = ?`, c.Query("primary"))
+    image, err := repository.Image(ic.db, c.Query("primary"))
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
         return
     }
 
-    c.JSON(http.StatusOK, m)
+    c.JSON(http.StatusOK, image)
 }
 
 func (ic *ImageController) GetAllGenre(c *gin.Context) {
-    m := make([]model.Genre, 0)
-
-    sql_string := `
-        SELECT attribute_primary as Extracted FROM image 
-        UNION 
-        SELECT attribute_secondary FROM image 
-        UNION 
-        SELECT attribute_tertiary FROM image 
-        `
-
-    err := ic.db.Select(&m, sql_string)
+    genres, err := repository.AllGenre(ic.db)
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
         return
     }
 
-    c.JSON(http.StatusOK, m)
+    c.JSON(http.StatusOK, genres)
 }
 
 func (ic *ImageController) GetAllCharactorName(c *gin.Context) {
-    m := make([]model.ImageDB, 0)
-
-    sql_string := `SELECT character_name FROM image`
-
-    err := ic.db.Select(&m, sql_string)
+    names, err := repository.AllCharactorName(ic.db)
     if err != nil {
         log.Printf(err.Error())
         c.Status(http.StatusInternalServerError)
         return
     }
 
-    c.JSON(http.StatusOK, m)
+    c.JSON(http.StatusOK, names)
 }
 
-func (ic *ImageController)RegisteImage(c *gin.Context) {
+func (ic *ImageController) RegisteImage(c *gin.Context) {
     // TODO: validation, id brocking, extension blocking ...
     // TODO: 同一IPからの過剰な送信を防ぐ
     // TODO: S3に一定以上データが貯まると送信を防ぐ(サーバのアプリ側で弾くのではなく、S3のポリシーを変えるのが確実)
@@ -131,15 +113,17 @@ func (ic *ImageController)RegisteImage(c *gin.Context) {
     }
 
     // SQL
-    _, err = ic.db.NamedExec(`insert into image (url, character_name, attribute_primary, attribute_secondary, attribute_tertiary) values (:url, :name, :a, :b, :c)`,
-        map[string]interface{}{
-            "url": url,
-            "name": c.Query("character"),
-            "a": c.Query("primary"),
-            "b": c.Query("secondary"),
-            "c": c.Query("tertiary"),
-    })
-
+    err = repository.RegisteImage(
+        ic.db,
+        url,
+        c.Query("character"),
+        c.Query("primary"),
+    )
+    if err!= nil {
+        log.Printf(err.Error())
+        c.Status(http.StatusInternalServerError)
+        return
+    }
     log.Printf("[REGIST] IP: " + c.ClientIP() + ",  FILE: " + name)
     c.Status(http.StatusOK) // if even one file to fail, server return 500 state.
 }

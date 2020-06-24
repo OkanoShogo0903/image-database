@@ -1,5 +1,9 @@
 run:
 	go run cmd/api/main.go
+
+test:
+	go test ./...
+
 log:
 	heroku logs -t
 
@@ -29,17 +33,27 @@ api/heroku/get:
 	curl -v -X GET \
 		https://img-database.herokuapp.com/images?primary=flatter
 
-api/local/get:
+api/local/health_check:
 	curl -v -X GET \
-		http://localhost:8080/images?primary=flatter
+		http://localhost:8080/health_check
 
-api/local/get_all:
+api/local/get_image:
+	curl -v -X GET \
+		http://localhost:8080/images?primary=あいさつ
+
+api/local/get_all_image:
 	curl -v -X GET \
 		http://localhost:8080/all_image
 
+api/local/get_all_charactor:
+	curl -v -X GET \
+		http://localhost:8080/all_charactor
+
+api/local/get_all_category:
+	curl -v -X GET \
+		http://localhost:8080/all_genre
+
 api/local/put:
 	curl -v -X PUT \
-		http://localhost:8080/registe \
-		-H 'content-type: application/json' \
-		-d '{ "background": 0, "plant_ids": [0, 3, 6], "creature_ids": [1, 2, 3, 4, 5]}'
+		http://localhost:8080/registe?character=月ノ美兎?primary=あいさつ
 
