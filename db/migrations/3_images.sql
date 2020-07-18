@@ -9,7 +9,7 @@ CREATE TABLE images (
   PRIMARY KEY (id),
   CONSTRAINT fk_character_id
     FOREIGN KEY (character_id) 
-    REFERENCES characters (id)
+    REFERENCES characters (id),
 
   CONSTRAINT fk_main_category_id
     FOREIGN KEY (main_category_id) 
