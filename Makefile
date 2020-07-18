@@ -55,5 +55,4 @@ api/local/get_all_category:
 
 api/local/put:
 	curl -v -X PUT \
-		http://localhost:8080/registe?character=月ノ美兎?primary=あいさつ
-
+		http://localhost:8080/registe?character=daigo?primary=daigo&secondary=undefined&tertiary=undefined
