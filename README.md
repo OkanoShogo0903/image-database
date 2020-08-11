@@ -26,4 +26,7 @@ export LOCAL_HEROKU_IMG_APP_DATABASE_URL="root:password@tcp(localhost:3306)/imag
 export AWS_S3_REGION='xxxxxxxxx'
 export AWS_IAM_ACCESS_KEY='xxxxxxxxxxxxxxxxxxxx'
 export AWS_SECRET_ACCESS_KEY='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+export HOST_IP=$(ifconfig wlp4s0 | grep inet | grep -v inet6 | sed -E "s/inet ([0-9]{1,3}.[0-9]{1,3}.[0-9].{1,3}.[0-9]{1,3}) .*$/\1/" | sed "s/ //g")
 ```
+

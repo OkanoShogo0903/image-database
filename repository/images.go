@@ -1,6 +1,7 @@
 package repository
 
 import (
+    "log"
     "errors"
 
     "github.com/jmoiron/sqlx"
@@ -53,12 +54,29 @@ func AllGenre(db *sqlx.DB) ([]string, error) {
 }
 
 func AllCharactorName(db *sqlx.DB) ([]string, error) {
-	var m []string
+    var m []string
 
     if err := db.Select(&m, `SELECT name from characters`); err != nil {
         return nil, err
     }
     return m, nil
+}
+
+func CreateNewCharactor(db *sqlx.DB, new_char string) (error) {
+    /*
+    tx := db.MustBegin()
+    tx.MustExec("INSERT INTO categories (name) VALUES ($1)", new_char)
+    tx.Commit()
+    */
+    _, err := db.NamedQuery(`INSERT INTO categories name=:name`,
+        map[string]interface{}{
+            "name": new_char,
+    })
+    if err != nil {
+        return err
+    }
+
+    return nil
 }
 
 func RegisteImage(db *sqlx.DB, url string, character_name string, category_name string) (error) {
@@ -73,30 +91,42 @@ func RegisteImage(db *sqlx.DB, url string, character_name string, category_name 
     }
     // TODO interface実装じゃなくて、imagesモデルにデータを入れてからNameExecに渡すようにする
 
-    _, err = db.NamedExec(`insert into images (url, character_id, category_id) values (:url, :character, :category)`,
+    log.Printf("non pass")
+    _, err = db.NamedExec(`insert into images (url, character_id, category_id) values (:url, :character_id, :category_id)`,
         map[string]interface{}{
             "url": url,
-            "character": character_id,
-            "category": category_id,
+            "character_id": character_id,
+            "category_id": category_id,
     })
+    log.Printf("pass")
     return err
 }
 
 func CharacterName2Id(db *sqlx.DB, name string) (string, error) {
-	var id string
+    var id []string
 
     if err := db.Select(&id, `SELECT id from characters WHERE name = ?`, name); err != nil {
         return "", err
     }
-    return id, nil
+
+    if empty := 0; len(id) == empty {
+        return "", nil
+    }
+
+    return id[0], nil
 }
 
 func CategoryName2Id(db *sqlx.DB, name string) (string, error) {
-	var id string
+    var id []string
 
     if err := db.Select(&id, `SELECT id from categories WHERE name = ?`, name); err != nil {
         return "", err
     }
-    return id, nil
+
+    if empty := 0; len(id) == empty {
+        return "", nil
+    }
+
+    return id[0], nil
 }
 

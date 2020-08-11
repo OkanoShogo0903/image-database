@@ -58,6 +58,8 @@ func (s *Server) Route() *gin.Engine {
     router.GET("/all_genre", controller.GetAllGenre)
     router.GET("/all_charactor", controller.GetAllCharactorName)
     //router.GET("/Attributes", controller.GetAttributes)
+    router.PUT("/new_charactor", controller.PutNewCharactor)
+    //router.PUT("/new_genre", controller.PutNewGenre)
     router.PUT("/registe", controller.RegisteImage)
     //router.PUT("/update", aquarium_controller.UpdateImageAttribute)
 

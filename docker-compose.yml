@@ -1,15 +1,16 @@
 version: "3.5"
 
 services:
-##  mysql:
-##    image: mysql:8.0
-##    container_name: image-mysql
-##    restart: always
-##    command: --default-authentication-plugin=mysql_native_password
-##    environment:
-##      MYSQL_ROOT_PASSWORD: password
-##    ports:
-##      - 3306:3306
+  mysql:
+    image: mysql:8.0
+    container_name: image-mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3306:3306
+
   app:
     container_name: image-app-hotload
     build:
@@ -17,13 +18,12 @@ services:
       target: builder
     volumes:
       - ./:/app
-    command: realize start --server
+    command: reflex -r '\.go$$' -s -- sh -c 'go run cmd/api/main.go'
     environment:
       - API_VERSION=development
-      - LOCAL_HEROKU_IMG_APP_DATABASE_URL
+      - DATABASE_DATASOURCE
     ports:
       - 5002:5002
       - 8080:8080
-      - 3306:3306
-        #depends_on:
-        #  - mysql
+    depends_on:
+        - mysql

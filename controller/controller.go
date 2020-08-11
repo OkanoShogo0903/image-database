@@ -72,59 +72,82 @@ func (ic *ImageController) GetAllCharactorName(c *gin.Context) {
     c.JSON(http.StatusOK, names)
 }
 
+func (ic *ImageController) PutNewCharactor(c *gin.Context) {
+    err := repository.CreateNewCharactor(ic.db, c.Query("char"))
+    if err != nil {
+        log.Printf(err.Error())
+        c.Status(http.StatusInternalServerError)
+        return
+    }
+}
+
+/*
+func (ic *ImageController) PutNewGenre(c *gin.Context) {
+    err := repository.CreateNewGenre(ic.db, c.Query("genre"))
+    if err != nil {
+    }
+}
+*/
+
 func (ic *ImageController) RegisteImage(c *gin.Context) {
     // TODO: validation, id brocking, extension blocking ...
     // TODO: 同一IPからの過剰な送信を防ぐ
     // TODO: S3に一定以上データが貯まると送信を防ぐ(サーバのアプリ側で弾くのではなく、S3のポリシーを変えるのが確実)
-    form, _ := c.MultipartForm()
-
-    file := form.File["file"][0] // ひとつだけ処理
-
-    uri := "tmp/" + file.Filename
-
-    // TODO: 雑にIO処理噛ませて変換してるけど、これは速度的に遅い
-    // Save and remove
-    err := c.SaveUploadedFile(file, uri)
-    if err != nil {
-        c.Status(http.StatusInternalServerError)
-        return
-    }
-    defer os.Remove(uri)
-
-    // Trans type to io.Reader from *multipart.FileHeader
-    file_io, err := os.Open(uri)
+    form, err := c.MultipartForm()
     if err != nil {
         log.Printf(err.Error())
-        c.Status(http.StatusInternalServerError)
-        return
-    }
-    defer file_io.Close()
-
-    // Upload image and get uploaded url
-    s3 := aws.New()
-    s3.Init("resimagebucket", "AWS_S3_REGION", "AWS_IAM_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY") // Please write "export AWS_S3_REGION='xxx' to .bashrc"
-
-    name := createUuidV4() + extractExtension(file.Filename)
-    url, err := s3.UploadImage(file_io, name)
-    if err != nil {
-        log.Printf(err.Error())
-        c.Status(http.StatusInternalServerError)
+        c.Status(http.StatusBadRequest)
         return
     }
 
-    // SQL
-    err = repository.RegisteImage(
-        ic.db,
-        url,
-        c.Query("character"),
-        c.Query("primary"),
-    )
-    if err!= nil {
-        log.Printf(err.Error())
-        c.Status(http.StatusInternalServerError)
-        return
+    files := form.File["file"]
+    for _, file := range files {
+        uri := "tmp/" + file.Filename
+        // TODO: 雑にIO処理噛ませて変換してるけど、これは速度的に遅い
+        // Save and remove
+        err = c.SaveUploadedFile(file, uri)
+        if err != nil {
+            log.Printf(err.Error())
+            c.Status(http.StatusInternalServerError)
+            return
+        }
+        defer os.Remove(uri)
+
+        // Trans type to io.Reader from *multipart.FileHeader
+        file_io, err := os.Open(uri)
+        if err != nil {
+            log.Printf(err.Error())
+            c.Status(http.StatusInternalServerError)
+            return
+        }
+        defer file_io.Close()
+
+        // Upload image and get uploaded url
+        s3 := aws.New()
+        s3.Init("resimagebucket", "AWS_S3_REGION", "AWS_IAM_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY") // Please write "export AWS_S3_REGION='xxx' to .bashrc"
+
+        name := createUuidV4() + extractExtension(file.Filename)
+        url, err := s3.UploadImage(file_io, name)
+        if err != nil {
+            log.Printf(err.Error())
+            c.Status(http.StatusInternalServerError)
+            return
+        }
+
+        // SQL
+        err = repository.RegisteImage(
+            ic.db,
+            url,
+            c.Query("character"),
+            c.Query("primary"),
+        )
+        if err != nil {
+            log.Printf(err.Error())
+            c.Status(http.StatusInternalServerError)
+            return
+        }
+        log.Printf("[REGIST] IP: " + c.ClientIP() + ",  FILE: " + name)
     }
-    log.Printf("[REGIST] IP: " + c.ClientIP() + ",  FILE: " + name)
     c.Status(http.StatusOK) // if even one file to fail, server return 500 state.
 }
 
