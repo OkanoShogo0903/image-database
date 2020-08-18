@@ -5,6 +5,7 @@ CREATE TABLE images (
   url TEXT(3000) NOT NULL,
   character_id int(10) UNSIGNED NOT NULL,
   main_category_id int(10) UNSIGNED NOT NULL,
+  favorite boolean NOT NULL DEFAULT false,
 
   PRIMARY KEY (id),
   CONSTRAINT fk_character_id
