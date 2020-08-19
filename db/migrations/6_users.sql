@@ -1,7 +1,7 @@
 -- +goose Up
 CREATE TABLE users (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  ipv4 int(4) UNSIGNED NOT NULL,
+  ipv4 int(4) UNSIGNED NOT NULL unique,
   ctime timestamp,
 
   PRIMARY KEY (id)
