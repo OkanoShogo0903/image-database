@@ -1,7 +1,8 @@
 package model
 
 import (
-// null "gopkg.in/guregu/null.v3"
+	// null "gopkg.in/guregu/null.v3"
+	"time"
 )
 
 // DB mapping and throw to client as raw
@@ -16,4 +17,10 @@ type Image struct {
 type Categories struct {
 	Id   int    `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
+}
+
+type User struct {
+	Id    int       `db:"id" json:"id"`
+	Ip    int       `db:"ipv4" json:"ip"`
+	Ctime time.Time `db:"ctime" json:"ctime"`
 }
