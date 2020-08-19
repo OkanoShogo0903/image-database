@@ -7,10 +7,12 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/OkanoShogo0903/image-database/aws"
+	"github.com/OkanoShogo0903/image-database/model"
 	"github.com/OkanoShogo0903/image-database/repository"
 )
 
@@ -159,4 +161,64 @@ func createUuidV4() string {
 func extractExtension(s string) string {
 	// "hoge.png" -> ".png"
 	return s[strings.LastIndex(s, "."):]
+}
+
+func (ic *ImageController) PutFav(c *gin.Context) {
+	/*
+		- なぜサービス層を介さないのか？
+			FavをDBに反映することがうまくいかなかったとしてもユーザ登録はやっときたいから
+
+		- なぜユーザがサイトを訪れた時にユーザIDをサーバから渡してその後はリクエストにユーザIDをつけるようにせず、リクエストごとにIPからユーザ特定をするようにしているのか？
+			前者の場合は簡単に他社のフリをすることが可能であり脆弱であるから
+			また、Authを噛ませる方法もありそちらの方がセキュアだし別IPからアクセスしたい時にも便利だが、ユーザが利用するまでに面倒くささが発生するのでより簡単に使えるようにとしてない
+	*/
+
+	type Body struct {
+		ImageId int  `json:"image_id" binding:"required"`
+		IsFav   bool `json:"is_fav" binding:"required"`
+	}
+	var body Body
+	if err := c.BindWith(&body, binding.JSON); err != nil {
+		log.Printf(err.Error())
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	is_existp, err := repository.IsExistUser(ic.db, c.ClientIP())
+	if err != nil {
+		log.Printf(err.Error())
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	if *is_existp == false {
+		err = repository.CreateUser(ic.db, c.ClientIP())
+		if err != nil {
+			log.Printf(err.Error())
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	var user []model.User
+	user, err = repository.GetUser(ic.db, c.ClientIP())
+	if err != nil || len(user) == 0 {
+		log.Printf(err.Error())
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	err = repository.PutFav(
+		ic.db,
+		user[0].Id,
+		body.ImageId,
+		body.IsFav,
+	)
+	if err != nil {
+		log.Printf(err.Error())
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

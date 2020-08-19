@@ -78,6 +78,9 @@ api/local/get_all_category:
 	curl -v -X GET \
 		http://localhost:8080/all_genre
 
-api/local/put:
+api/local/put_registe:
 	curl -v -X PUT \
 		http://localhost:8080/registe?character=daigo?primary=daigo&secondary=undefined&tertiary=undefined
+
+api/local/put_fav:
+	curl -v -X PUT http://localhost:8080/fav -d '{"image_id": 4, "is_fav": true}'

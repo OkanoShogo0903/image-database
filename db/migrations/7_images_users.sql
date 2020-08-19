@@ -5,7 +5,7 @@ CREATE TABLE images_users (
   user_id int(10) UNSIGNED NOT NULL,
 
   favorite boolean NOT NULL DEFAULT false,
-  ctime timestamp,
+  ctime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
 
